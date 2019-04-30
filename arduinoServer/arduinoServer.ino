@@ -1,16 +1,25 @@
+//////////////////////////////////////////////////////////////////////////////// LEDS
+#include <Adafruit_NeoPixel.h>
+//////////////////////////////////////////////////////////////////////////////// BLIND SPOT SENSOR
+/* Constantes pour les broches */
+const byte TRIGGER_PIN = 2; // Broche TRIGGER
+const byte ECHO_PIN = 3;    // Broche ECHO
+ 
+/* Constantes pour le timeout */
+const unsigned long MEASURE_TIMEOUT = 25000UL; // 25ms = ~8m à 340m/s
+
+/* Vitesse du son dans l'air en mm/us */
+const float SOUND_SPEED = 340.0 / 1000;
+//////////////////////////////////////////////////////////////////////////////// WIFI
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 #include <OSCMessage.h>
 #include <WiFiClientSecure.h>
-#include <Adafruit_NeoPixel.h> // LED
-
-
-////////////////////////////////////////////////////////////////////////////////
 const char* ssid = "ESGI";//"CCCP";                     // TODO: your network SSID (name)
 const char* password = "Reseau-GES";//"6c28995d5791";             // TODO: your network password
 //const IPAddress outIp(/*192,168,43,222*/);    // TODO: remote IP of your computer
-////////////////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////////////// LEDS
 #define PIN D8
 #define SIZE 14
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(14, PIN, NEO_GRB + NEO_KHZ800); // 14 LEDS in the strip
@@ -29,17 +38,18 @@ void turnOff() {
   colorWipe(strip.Color(0, 0, 0),0,14);
 }
 void turnRight() {
-  colorWipe(strip.Color(255, 100, 0), 0, 7); // 7 leds at right ->
+  colorWipe(strip.Color(255, 70, 0), 0, 7); // 7 leds orange at right ->
 }
 void turnLeft() {
-  colorWipe(strip.Color(255, 100, 0), 7, 14); // 7 leds at left <-
+  colorWipe(strip.Color(255, 70, 0), 7, 14); // 7 leds orange at left <-
 }
+/////////////////////////////////////////////////////////////////////////////// BLIND SPOT SENSOR
 
+/////////////////////////////////////////////////////////////////////////////// WIFI
 /*const unsigned int localPort = 8888;  // local port to listen for OSC packets (not used for sending)
 const unsigned int outPort = 4559;    // remote port to receive OSC
 WiFiUDP Udp;                          // A UDP instance to let us send and receive packets over UDP
 */
-
 const uint16_t HTTPPort = 80;
 const byte maxURL = 50;
 char urlRequest[maxURL + 1]; // +1 for '\0'
@@ -47,15 +57,21 @@ long timeThresold = 0;
 WiFiClientSecure clientSecure;
 WiFiServer serveurWeb(HTTPPort); // create http server on standard port
 
+
 void setup() {
     Serial.begin(115200);
+    ////////////////////////////////////////////////////////// TURNING INDICATORS INIT
     // Light the leds
     for (int i = 0; i < 14; i++) {
       pinMode(buttonPin[i], INPUT_PULLUP);
       Serial.println(i);
     }
     strip.begin();
-    strip.show(); // Initialize all pixels to 'off'
+    strip.show(); // Initialize all leds to 'off'
+    ////////////////////////////////////////////////////////// BLIND SPOT INIT
+    pinMode(TRIGGER_PIN, OUTPUT);
+    digitalWrite(TRIGGER_PIN, LOW); // La broche TRIGGER doit être à LOW au repos
+    pinMode(ECHO_PIN, INPUT);
     
     // Connect to WiFi network
     // WiFi.begin(ssid, pass);
@@ -78,7 +94,7 @@ void loop() {
     //msg.send(Udp);
     //Udp.endPacket();
     //msg.empty();
-    if(blink==true){ turnRight(); blink=false;  Serial.println("Allume"); }
+    if(blink==true){ turnLeft(); blink=false;  Serial.println("Allume"); }
     else{ turnOff(); blink=true; Serial.println("Eteint"); }
 
     delay(400);
