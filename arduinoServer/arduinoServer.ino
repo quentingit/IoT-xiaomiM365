@@ -2,8 +2,8 @@
 #include <Adafruit_NeoPixel.h>
 //////////////////////////////////////////////////////////////////////////////// BLIND SPOT SENSOR
 /* Constantes pour les broches */
-const byte TRIGGER_PIN = 2; // Broche TRIGGER
-const byte ECHO_PIN = 3;    // Broche ECHO
+//const byte TRIGGER_PIN = 2; // Broche TRIGGER
+//const byte ECHO_PIN = 3;    // Broche ECHO
  
 /* Constantes pour le timeout */
 const unsigned long MEASURE_TIMEOUT = 25000UL; // 25ms = ~8m à 340m/s
@@ -43,6 +43,11 @@ void turnRight() {
 void turnLeft() {
   colorWipe(strip.Color(255, 70, 0), 7, 14); // 7 leds orange at left <-
 }
+void Break() {
+  colorWipe(strip.Color(255, 0, 0), 0, 14);
+}
+int delaycount = 0;
+int action = 0;
 /////////////////////////////////////////////////////////////////////////////// BLIND SPOT SENSOR
 
 /////////////////////////////////////////////////////////////////////////////// WIFI
@@ -69,9 +74,9 @@ void setup() {
     strip.begin();
     strip.show(); // Initialize all leds to 'off'
     ////////////////////////////////////////////////////////// BLIND SPOT INIT
-    pinMode(TRIGGER_PIN, OUTPUT);
-    digitalWrite(TRIGGER_PIN, LOW); // La broche TRIGGER doit être à LOW au repos
-    pinMode(ECHO_PIN, INPUT);
+    pinMode(D4, OUTPUT); // TRIGGER_PIN
+    digitalWrite(D4, LOW); // TRIGGER_PIN doit être à LOW au repos
+    pinMode(D3, INPUT); // ECHO_PIN
     
     // Connect to WiFi network
     // WiFi.begin(ssid, pass);
@@ -94,8 +99,33 @@ void loop() {
     //msg.send(Udp);
     //Udp.endPacket();
     //msg.empty();
-    if(blink==true){ turnLeft(); blink=false;  Serial.println("Allume"); }
-    else{ turnOff(); blink=true; Serial.println("Eteint"); }
-
-    delay(400);
+    // ===================================== TURN LIGHT INDICATION
+    if(delaycount == 10) delaycount = 0;
+    if(delaycount == 0){
+      if(blink==true){ 
+        if( action==1 ) turnLeft();
+        if( action==2 ) turnLeft();
+        blink=false;  /*Serial.println("Allume"); }*/
+      }
+      else{ turnOff(); blink=true; /*Serial.println("Eteint");*/ }
+    }
+    // ===================================== BLIND SPOT DETECTION
+    /* 1. Lance une mesure de distance en envoyant une impulsion HIGH de 10µs sur la broche TRIGGER */
+    digitalWrite(D4, HIGH); // trigger pin
+    delayMicroseconds(10);
+    digitalWrite(D4, LOW); // trigger pin
+    
+    /* 2. Mesure le temps entre l'envoi de l'impulsion ultrasonique et son écho (si il existe) */
+    long measure = pulseIn(D3, HIGH, MEASURE_TIMEOUT); // ECHO_PIN
+     
+    /* 3. Calcul la distance à partir du temps mesuré */
+    float distance_cm = (measure / 2.0 * SOUND_SPEED) / 10.0;
+     
+    if(distance_cm) {
+      Serial.println(distance_cm, 2); // CM DISTANCE
+      if( distance_cm < 120 ) { Break(); }
+    }
+    // =====================================
+    delaycount++;
+    delay(40);
 }
