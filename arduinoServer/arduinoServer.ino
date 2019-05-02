@@ -1,17 +1,14 @@
 //////////////////////////////////////////////////////////////////////////////// LEDS
 #include <Adafruit_NeoPixel.h>
 //////////////////////////////////////////////////////////////////////////////// BLIND SPOT SENSOR
-/* Constantes pour les broches */
-//const byte TRIGGER_PIN = 2; // Broche TRIGGER
-//const byte ECHO_PIN = 3;    // Broche ECHO
- 
-/* Constantes pour le timeout */
-const unsigned long MEASURE_TIMEOUT = 25000UL; // 25ms = ~8m à 340m/s
+// TIMEOUT
+const unsigned long MEASURE_TIMEOUT = 12000UL; // 12ms = ~4m (340m/s)
 
 /* Vitesse du son dans l'air en mm/us */
 const float SOUND_SPEED = 340.0 / 1000;
 //////////////////////////////////////////////////////////////////////////////// WIFI
 #include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
 #include <WiFiUdp.h>
 #include <OSCMessage.h>
 #include <WiFiClientSecure.h>
@@ -49,7 +46,7 @@ void Break() {
 int delaycount = 0;
 int action = 0;
 /////////////////////////////////////////////////////////////////////////////// BLIND SPOT SENSOR
-
+int delaylight = 0;
 /////////////////////////////////////////////////////////////////////////////// WIFI
 /*const unsigned int localPort = 8888;  // local port to listen for OSC packets (not used for sending)
 const unsigned int outPort = 4559;    // remote port to receive OSC
@@ -99,33 +96,46 @@ void loop() {
     //msg.send(Udp);
     //Udp.endPacket();
     //msg.empty();
+    // ===================================== BLIND SPOT DETECTION
+    /* start to measure with HIGH PULSE of 10µs in TRIGGER PIN */
+    digitalWrite(D4, HIGH); // D4 = trigger pin
+    delayMicroseconds(10);
+    digitalWrite(D4, LOW); // D4 = trigger pin
+    
+    /* measure time between pulse and ECHO */
+    long measure = pulseIn(D3, HIGH, MEASURE_TIMEOUT); // ECHO_PIN
+     
+    /* 3. Calcul la distance à partir du temps mesuré */
+    float distance_cm = (measure / 2.0 * SOUND_SPEED) / 10.0;
+
+    Serial.println("400");
+    if(distance_cm) {
+      Serial.println(distance_cm, 2); // CM DISTANCE
+      if( distance_cm < 120 ) { 
+        Break(); // RED LIGHTS ARE ON
+        delaylight = 0; // RESET LIGHT DELAY
+      }
+    }
+    if( !action && delaylight > 10 || distance_cm >= 120 && delaylight > 5) {
+      turnOff();
+    }
     // ===================================== TURN LIGHT INDICATION
     if(delaycount == 10) delaycount = 0;
     if(delaycount == 0){
       if(blink==true){ 
         if( action==1 ) turnLeft();
-        if( action==2 ) turnLeft();
+        if( action==2 ) turnRight();
         blink=false;  /*Serial.println("Allume"); }*/
       }
-      else{ turnOff(); blink=true; /*Serial.println("Eteint");*/ }
+      else{ 
+        if( distance_cm >= 120 ) { 
+          turnOff(); 
+        } 
+        blink=true; /*Serial.println("Eteint");*/ }
     }
-    // ===================================== BLIND SPOT DETECTION
-    /* 1. Lance une mesure de distance en envoyant une impulsion HIGH de 10µs sur la broche TRIGGER */
-    digitalWrite(D4, HIGH); // trigger pin
-    delayMicroseconds(10);
-    digitalWrite(D4, LOW); // trigger pin
-    
-    /* 2. Mesure le temps entre l'envoi de l'impulsion ultrasonique et son écho (si il existe) */
-    long measure = pulseIn(D3, HIGH, MEASURE_TIMEOUT); // ECHO_PIN
-     
-    /* 3. Calcul la distance à partir du temps mesuré */
-    float distance_cm = (measure / 2.0 * SOUND_SPEED) / 10.0;
-     
-    if(distance_cm) {
-      Serial.println(distance_cm, 2); // CM DISTANCE
-      if( distance_cm < 120 ) { Break(); }
-    }
+
     // =====================================
     delaycount++;
+    delaylight++;
     delay(40);
 }
