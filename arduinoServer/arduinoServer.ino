@@ -44,8 +44,10 @@ const unsigned long MEASURE_TIMEOUT = 25000UL; // TIMEOUT : 12ms = ~4m (340m/s)
 const float SOUND_SPEED = 340.0 / 1000; // sound speed in the air in mm/µs
 int delaylight = 0;
 // ===================================== WIFI
-const char* ssid = "ESGI";//"CCCP";                     // your network SSID (name)
-const char* password = "Reseau-GES";//"6c28995d5791";             // your network password
+const char* ssid = "Freebox-03F8EF";//"CCCP";                     // your network SSID (name)
+//const char* password = "Reseau-GES";//"6c28995d5791";             // your network password
+//const char* ssid = "ESGI";
+const char* password = "emptor!#-cogitemus*-cellia97-timebunt*";
 WiFiServer server(80);
 // Variable to store the HTTP request
 String header;
@@ -180,10 +182,20 @@ void requestListener()
 
 void setup() {
   Serial.begin(115200);
+  // ==================================== DEBUG
+  pinMode(LED_BUILTIN, OUTPUT);  // debug led
+  delay(10);
+  // debug phase indication
+  digitalWrite(LED_BUILTIN, LOW); // debug led on
+  delay(1000);
+  digitalWrite(LED_BUILTIN, HIGH); // debug led off
+  delay(1000); 
+  digitalWrite(LED_BUILTIN, LOW); // debug led on
   // ===================================== TURNING INDICATORS INIT
   strip.begin();
   strip.show(); // Initialize all leds to 'off'
   // ===================================== BLIND SPOT INIT
+  
   pinMode(D2, OUTPUT); // TRIGGER_PIN
   digitalWrite(D2, LOW); // TRIGGER_PIN should be LOW when not using
   pinMode(D1, INPUT); // ECHO_PIN
@@ -195,6 +207,7 @@ void setup() {
   while (WiFi.status() != WL_CONNECTED) { // while not connected, we wait
     delay(500);
     Serial.print('.');
+    digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN)); // debug led on
   }
   Serial.println();
 
@@ -203,6 +216,9 @@ void setup() {
   printHTTPServerInfo();
 
   delay(5000); // so we can see the server informations
+
+  // ==================================== DEBUG
+  digitalWrite(LED_BUILTIN, HIGH); // debug led off
 }
 
 void loop() {
@@ -232,7 +248,12 @@ void loop() {
     }
     valuesHistory[0] = distance_cm;
     float med = QuickMedian<float>::GetMedian(valuesHistory, valuesHistoryLen);
-    Serial.print(med); // CM DISTANCE MEDIAN + AVERAGE
+    Serial.print(med); // CM DISTANCE MEDIAN
+    Serial.print(" ");
+    float moy = 0;
+    for(int i=0;i<15;i++){ moy += valuesHistory[i]; }
+    moy = moy / 15;
+    Serial.print(moy); // CM DISTANCE AVERAGE
     Serial.print(" ");
     Serial.println(distance_cm, 2); // CM DISTANCE
     if ( med < 120 )
