@@ -92,10 +92,6 @@ void loop() {
     static float cnt = 0.42;
     OSCMessage msg("/test");
     msg.add(cnt++);
-    //Udp.beginPacket(outIp, outPort);
-    //msg.send(Udp);
-    //Udp.endPacket();
-    //msg.empty();
     // ===================================== BLIND SPOT DETECTION
     /* start to measure with HIGH PULSE of 10µs in TRIGGER PIN */
     digitalWrite(D4, HIGH); // D4 = trigger pin
@@ -105,10 +101,10 @@ void loop() {
     /* measure time between pulse and ECHO */
     long measure = pulseIn(D3, HIGH, MEASURE_TIMEOUT); // ECHO_PIN
      
-    /* 3. Calcul la distance à partir du temps mesuré */
+    /* calculation of the distance... */
     float distance_cm = (measure / 2.0 * SOUND_SPEED) / 10.0;
 
-    Serial.println("400");
+    Serial.println("400"); // MAX
     if(distance_cm) {
       Serial.println(distance_cm, 2); // CM DISTANCE
       if( distance_cm < 120 ) { 
@@ -116,7 +112,7 @@ void loop() {
         delaylight = 0; // RESET LIGHT DELAY
       }
     }
-    if( !action && delaylight > 10 || distance_cm >= 120 && delaylight > 5) {
+    if( !action && delaylight > 10 || !action && distance_cm >= 120 && delaylight > 5) {
       turnOff();
     }
     // ===================================== TURN LIGHT INDICATION
