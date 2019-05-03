@@ -61,14 +61,14 @@
                 document.getElementById("right").innerHTML="<a onclick='rightBlinking(1)'>  <img class='blink_me' src='./clignotant.png' style='position: absolute; width:150px; height:150px;top: 50%;left: 85%;-moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); transform: translateX(-50%) translateY(-50%);%)' /></a>";
                 //SEND XMLHttpRequest
                  var request = new XMLHttpRequest();
-                 var uniqueURL = "http://192.168.43.109:80/rightblinking?rightblinking=0";
+                 var uniqueURL = "http://192.168.43.114:80/rightblinking?rightblinking=0";
                  request.open("GET", uniqueURL , true); // ici on envoie la requête GET sur l'URL
                  request.send(null);
              }else{
                     document.getElementById("right").innerHTML="<a onclick='rightBlinking(0)'>  <img  src='./clignotant.png' style='position: absolute; width:150px; height:150px;top: 50%;left: 85%;-moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); transform: translateX(-50%) translateY(-50%);%)' /></a>";
                     //SEND XMLHttpRequest
                     var request = new XMLHttpRequest();
-                    var uniqueURL = "http://192.168.43.109:80/rightblinking?rightblinking=1";
+                    var uniqueURL = "http://192.168.43.114:80/rightblinking?rightblinking=1";
                     request.open("GET", uniqueURL , true); // ici on envoie la requête GET sur l'URL
                     request.send(null);
              }
@@ -79,14 +79,14 @@
                      document.getElementById("left").innerHTML="<a onclick='leftBlinking(1)'>  <img class='blink_me' src='./clignotant.png' style='position: absolute; width:150px; height:150px;top: 50%;left: 15%;-moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); transform: translateX(-50%) translateY(-50%);%)' /></a>";
                     //SEND XMLHttpRequest
                     var request = new XMLHttpRequest();
-                    var uniqueURL = "http://192.168.43.109:80/leftblinking?leftblinking=0";
+                    var uniqueURL = "http://192.168.43.114:80/leftblinking?leftblinking=0";
                     request.open("GET", uniqueURL , true); // ici on envoie la requête GET sur l'URL
                     request.send(null);
                  }else{
                      document.getElementById("left").innerHTML="<a onclick='leftBlinking(0)'>  <img  src='./clignotant.png' style='position: absolute; width:150px; height:150px;top: 50%;left: 15%;-moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); transform: translateX(-50%) translateY(-50%);%)' /></a>";
                       //SEND XMLHttpRequest
                        var request = new XMLHttpRequest();
-                       var uniqueURL = "http://192.168.43.109:80/leftblinking?leftblinking=1";
+                       var uniqueURL = "http://192.168.43.114:80/leftblinking?leftblinking=1";
                        request.open("GET", uniqueURL , true); // ici on envoie la requête GET sur l'URL
                        request.send(null);
                  }
@@ -99,7 +99,7 @@
                        document.getElementById("bg").innerHTML="<img style='position:absolute;z-index:0;max-width:100%;max-height:100%;height: auto;width:auto;position: absolute;top: 50%;left: 50%; -moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%);transform: translateX(-50%) translateY(-50%);'  src='./bg-danger.png' />";
                        //SEND XMLHttpRequest
                        var request = new XMLHttpRequest();
-                       var uniqueURL = "http://192.168.43.109:80/warning?warning=0";
+                       var uniqueURL = "http://192.168.43.114:80/warning?warning=0";
                        request.open("GET", uniqueURL , true); // ici on envoie la requête GET sur l'URL
                        request.send(null);
                        //xmlHttp.responseText;
@@ -107,7 +107,7 @@
                        document.getElementById("warning").innerHTML="<a  onclick='warning(0)' style='padding:20px 60px; border-radius:20px; border:2px solid #60d3e1;color:#60d3e1; font-size:15px; position: absolute;top: 80%;left: 50%;-moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); transform: translateX(-50%) translateY(-50%);%);'>WARNING</a>";
                        document.getElementById("bg").innerHTML="<img style='position:absolute;z-index:0;max-width:100%;max-height:100%;height: auto;width:auto;position: absolute;top: 50%;left: 50%; -moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%);transform: translateX(-50%) translateY(-50%);'  src='./bg2.png' />";
                        var request = new XMLHttpRequest();
-                       var uniqueURL = "http://192.168.43.109:80/warning?warning=1";
+                       var uniqueURL = "http://192.168.43.114:80/warning?warning=1";
                        request.open("GET", uniqueURL , true); // ici on envoie la requête GET sur l'URL
                        request.send(null);
                       //request.send(null);

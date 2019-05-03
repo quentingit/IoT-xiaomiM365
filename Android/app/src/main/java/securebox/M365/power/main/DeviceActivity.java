@@ -407,7 +407,7 @@ public class DeviceActivity extends AppCompatActivity
                 return true;
             }
         });
-        webView.loadUrl("http://192.168.43.109:80");
+        webView.loadUrl("http://192.168.43.114:80");
         //webView.loadUrl("file:///android_asset/index.html");
 
         webView.registerHandler("submitFromWeb", new BridgeHandler() {
