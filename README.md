@@ -16,7 +16,7 @@ Turn signal and blind spot detection for Xiaomi M365
 
 - Sonar HC-SR04 or DYP-ME007V1 (5V)
 <p align="center">
-  <img src="ressources/sonar.jpg?raw=true">
+  <img src="ressources/sonar.jpg?raw=true" style="max-width:50%;">
 </p>
   
 ## Software requirements
@@ -34,14 +34,16 @@ If you use windows / OSx you will probably need drivers: [Wemos Driver](https://
 - ESP8266FS (SPIFFS, see: [Using ESP8266 SPIFFS tutorial](https://www.instructables.com/id/Using-ESP8266-SPIFFS/) )
 
 ## How does it work ?
-
+### Wiring
 Firstly, the Arduino card connect on a WiFi network. Modify the SSID and Password at the top of the code.<br>
 Secondly, use the diagram bellow the connect the sonar (enabling blind spot detection) and the led strip (enabling turn signal and warning signal) <br>
 
 ![Conneciton schema](ressources/ConnectionSchema.png?raw=true)
+You can found the original file in `ressources/Connection.fzz`
 
 ## Issues
 
+### The sonar HC-SR04 / DYP-ME007V1 filtering
 <br>
 While using the sonar HC-SR04 or DYP-ME007V1 we had problems with the echo signal. The original signal had random peaks (green signal on the picture bellow), like noise. We do not want this peaks as it is generating a bad blind spot detection randomly, even when we put a condition at 120CM or less to engage the blind spot signal.<br>
 <br>
