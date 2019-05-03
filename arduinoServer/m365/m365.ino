@@ -209,7 +209,7 @@ void handleFileCreate() {
 String stateDetector;
 
 //GLOBAL SPEED TROTINETTE , INITIALIZE TO 0 
-String speed="0";
+String speed="11";
 
 
 
@@ -471,11 +471,9 @@ void setup(void) {
   strip.begin();
   strip.show(); // Initialize all leds to 'off'
   // ===================================== BLIND SPOT INIT
-  /*
   pinMode(D2, OUTPUT); // TRIGGER_PIN
   digitalWrite(D2, LOW); // TRIGGER_PIN should be LOW when not using
   pinMode(D1, INPUT); // ECHO_PIN
-  */
   // =====================================
   
   server.begin();
@@ -495,17 +493,56 @@ void setup(void) {
 
 void loop(void) {
 
-
-
-  //DANS LA LOOP, IL FAUDRA CHECKER EN PERMANENCE LA VITESSE DE LA TROTINETTE
-
-  // SI CHECK DE LA VITESSE >=10 ET DU SENSOR QUI DETECTE
-        // ALORS ON UPDATE L'ETAT DU CAPTEUR
-              //stateDetector = true
-  // SINAN 
-              //stateDetector = false      
+  // Check the speed of the vehicle
+  if( speed.toInt() > 10 ){
+    // ===================================== BLIND SPOT DETECTION
+    /* start to measure with HIGH PULSE of 10µs in TRIGGER PIN */
+    digitalWrite(D2, HIGH); // trigger pin
+    delayMicroseconds(10);
+    digitalWrite(D2, LOW); // trigger pin
   
-
+    /* measure time between pulse and ECHO */
+    long measure = pulseIn(D1, HIGH, MEASURE_TIMEOUT); // ECHO_PIN
+  
+    /* calculation of the distance... */
+    float distance_cm = (measure / 2.0 * SOUND_SPEED) / 10.0;
+  
+    //Serial.println("0 400 "); // MAX
+    Serial.println(distance_cm);
+    if (distance_cm)
+    {
+      // shifting history of CM values
+      for(int i = 0;i<HistorySize;i++)
+      {
+        if(!valuesHistory[(HistorySize-2)-i]) valuesHistory[(HistorySize-1)-i] = distance_cm;
+        valuesHistory[(HistorySize-1)-i] = valuesHistory[(HistorySize-2)-i];
+      }
+      valuesHistory[0] = distance_cm;
+      float med = QuickMedian<float>::GetMedian(valuesHistory, valuesHistoryLen);
+      //Serial.print(med); // CM DISTANCE MEDIAN
+      //Serial.print(" ");
+      float moy = 0;
+      for(int i=0;i<HistorySize;i++){ moy += valuesHistory[i]; }
+      moy = moy / HistorySize;
+      //Serial.print(moy); // CM DISTANCE AVERAGE
+      //Serial.print(" ");
+      //Serial.println(distance_cm, 2); // CM DISTANCE
+      if ( med < 120 )
+      {
+        Serial.print("CAR DETECTED!! (");
+        Serial.print(med);
+        Serial.println(")");
+        stateDetector = "1"; // DETECTED
+      } 
+      else 
+      {
+        Serial.print("NOTHING!! ("); // TEMP
+        Serial.print(med);
+        Serial.println(")");
+        stateDetector = "0"; // NOTHING
+      }
+    } else stateDetector = "0"; // NOTHING
+  } else stateDetector = "0"; // NOTHING
                   
   server.handleClient();
   MDNS.update();
@@ -513,17 +550,15 @@ void loop(void) {
   // ===================================== TURN LIGHT INDICATION
   if (delaycount == 10) delaycount = 0;
   if (delaycount == 0)
-  {
-    Serial.print("Delaycount : ");
-    Serial.println(delaycount);
-    
+  { 
     if (blink == true)
-    {
+    { 
       Serial.print("BLINKING. action=");
       Serial.println(action);
       if ( action == 1 ) turnLeft();
       if ( action == 2 ) turnRight();
       if ( action == 3 ) warnings();
+      if ( stateDetector == "1" ) Break();
       blink = false;
     }
     else
