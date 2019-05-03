@@ -8,7 +8,11 @@ Turn signal and blind spot detection for Xiaomi M365
 
 ## Hardware requirements
 - Weemos D1 Mini (ESP8266, Arduino-compatible layout, wifi, 80/160Mhz, 4Mb flash)<BR>
-![Weemos D1 Mini](ressources/wemos.jpg?raw=true){ style="display: block; margin: 0 auto" }
+<p align="center">
+  <img src="ressources/wemos.jpg?raw=true">
+</p>
+- Led strip composed of 14 leds
+- Sonar HC-SR04 or DYP-ME007V1
   
 ## Software requirements
 
