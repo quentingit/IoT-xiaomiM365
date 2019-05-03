@@ -1,3 +1,11 @@
+// ===================================== LEDS
+#include <Adafruit_NeoPixel.h>
+// ===================================== BLIND SPOT SENSOR
+#include "QuickMedianLib.h"
+float valuesHistory[20];
+float valuesHistoryLen = sizeof(valuesHistory) / sizeof(float); // see doc for QuickMedianLib
+int HistorySize = 20;
+// ===================================== WIFI + SERVER + FS
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
@@ -19,6 +27,48 @@ ESP8266WebServer server(80);
 //holds the current upload
 File fsUploadFile;
 
+// ===================================== LEDS
+#define PIN D8
+#define SIZE 14
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(14, PIN, NEO_GRB + NEO_KHZ800); // 14 LEDS in the strip
+bool blink = false;
+
+// Fill the dots one after the other with a color
+void colorWipe(uint32_t c, uint16_t start, uint16_t end) {
+  for (uint16_t i = start; i < end; i++) {
+    strip.setPixelColor(i, c);
+  }
+
+  strip.show();
+}
+
+void turnOff() {
+  colorWipe(strip.Color(0, 0, 0), 0, 14);
+}
+
+void turnRight() {
+  colorWipe(strip.Color(255, 70, 0), 0, 7); // 7 leds orange at right ->
+}
+
+void turnLeft() {
+  colorWipe(strip.Color(255, 70, 0), 7, 14); // 7 leds orange at left <-
+}
+
+void warnings() {
+  colorWipe(strip.Color(255, 70, 0), 0, 14); // 14 orange warning leds <->
+}
+
+void Break() {
+  colorWipe(strip.Color(255, 0, 0), 0, 14); // 14 red warning leds <->
+}
+
+int delaycount = 0;
+int action = 0;
+// ===================================== BLIND SPOT SENSOR
+const unsigned long MEASURE_TIMEOUT = 25000UL; // TIMEOUT : 12ms = ~4m (340m/s)
+const float SOUND_SPEED = 340.0 / 1000; // sound speed in the air in mm/µs
+int delaylight = 0;
+// =====================================
 //format bytes
 String formatBytes(size_t bytes) {
   if (bytes < 1024) {
@@ -159,7 +209,7 @@ void handleFileCreate() {
 String stateDetector;
 
 //GLOBAL SPEED TROTINETTE , INITIALIZE TO 0 
-String speed="0";
+String speed="11";
 
 
 
@@ -172,11 +222,15 @@ void handleWarning() {
         DBG_OUTPUT_PORT.printf("warning :%s" , warning.c_str());
         //INSTRUCTIONS : WARNING A METTRE ICI
 
-        if(warning==0){
+        if(warning=="0"){
         //on fais clignotter
-          
-        }else{
+          Serial.println("WARNING ON <->");
+          action = 3;
+        }
+        if(warning=="1"){
          //on arrete
+         Serial.println("WARNING STOP");
+         action = 0;
         }
         
       
@@ -195,16 +249,20 @@ void handleLeftBlinking() {
  String leftBlinking;
     if ( server.hasArg("leftblinking") ) {
         leftBlinking = server.arg(0);
-        DBG_OUTPUT_PORT.printf("leftBlinking : %s" , leftBlinking.c_str());
+        DBG_OUTPUT_PORT.printf("<- leftBlinking : %s" , leftBlinking.c_str());
 
 
         //INSTRUCTIONS : WARNING A METTRE ICI
 
-        if(leftBlinking==0){
+        if(leftBlinking=="0"){
         //on fais clignotter
-          
-        }else{
+          Serial.println("LIGHT <-");
+          action = 1;
+        }
+        if(leftBlinking=="1"){
          //on arrete
+         Serial.println("LIGHT STOP");
+         action = 0;
         }
         
       
@@ -226,11 +284,15 @@ void handleRightBlinking() {
 
         //INSTRUCTIONS : WARNING A METTRE ICI
 
-        if(rightBlinking==0){
+        if(rightBlinking=="0"){
         //on fais clignotter
-          
-        }else{
+          action = 2;
+          Serial.print("LIGHT ->");
+        }
+        if(rightBlinking=="1"){
          //on arrete
+         Serial.println("LIGHT STOP");
+         action = 0;
         }
         
       
@@ -405,6 +467,14 @@ void setup(void) {
     json = String();
   });*/
 
+  // ===================================== TURNING INDICATORS INIT
+  strip.begin();
+  strip.show(); // Initialize all leds to 'off'
+  // ===================================== BLIND SPOT INIT
+  pinMode(D2, OUTPUT); // TRIGGER_PIN
+  digitalWrite(D2, LOW); // TRIGGER_PIN should be LOW when not using
+  pinMode(D1, INPUT); // ECHO_PIN
+  // =====================================
   
   server.begin();
   DBG_OUTPUT_PORT.println("HTTP server started");
@@ -423,18 +493,87 @@ void setup(void) {
 
 void loop(void) {
 
-
-
-  //DANS LA LOOP, IL FAUDRA CHECKER EN PERMANENCE LA VITESSE DE LA TROTINETTE
-
-  // SI CHECK DE LA VITESSE >=10 ET DU SENSOR QUI DETECTE
-        // ALORS ON UPDATE L'ETAT DU CAPTEUR
-              //stateDetector = true
-  // SINAN 
-              //stateDetector = false      
-
-
+  // Check the speed of the vehicle
+  if( speed.toInt() > 10 ){
+    // ===================================== BLIND SPOT DETECTION
+    /* start to measure with HIGH PULSE of 10µs in TRIGGER PIN */
+    digitalWrite(D2, HIGH); // trigger pin
+    delayMicroseconds(10);
+    digitalWrite(D2, LOW); // trigger pin
+  
+    /* measure time between pulse and ECHO */
+    long measure = pulseIn(D1, HIGH, MEASURE_TIMEOUT); // ECHO_PIN
+  
+    /* calculation of the distance... */
+    float distance_cm = (measure / 2.0 * SOUND_SPEED) / 10.0;
+  
+    //Serial.println("0 400 "); // MAX
+    Serial.println(distance_cm);
+    if (distance_cm)
+    {
+      // shifting history of CM values
+      for(int i = 0;i<HistorySize;i++)
+      {
+        if(!valuesHistory[(HistorySize-2)-i]) valuesHistory[(HistorySize-1)-i] = distance_cm;
+        valuesHistory[(HistorySize-1)-i] = valuesHistory[(HistorySize-2)-i];
+      }
+      valuesHistory[0] = distance_cm;
+      float med = QuickMedian<float>::GetMedian(valuesHistory, valuesHistoryLen);
+      //Serial.print(med); // CM DISTANCE MEDIAN
+      //Serial.print(" ");
+      float moy = 0;
+      for(int i=0;i<HistorySize;i++){ moy += valuesHistory[i]; }
+      moy = moy / HistorySize;
+      //Serial.print(moy); // CM DISTANCE AVERAGE
+      //Serial.print(" ");
+      //Serial.println(distance_cm, 2); // CM DISTANCE
+      if ( med < 120 )
+      {
+        Serial.print("CAR DETECTED!! (");
+        Serial.print(med);
+        Serial.println(")");
+        stateDetector = "1"; // DETECTED
+      } 
+      else 
+      {
+        Serial.print("NOTHING!! ("); // TEMP
+        Serial.print(med);
+        Serial.println(")");
+        stateDetector = "0"; // NOTHING
+      }
+    } else stateDetector = "0"; // NOTHING
+  } else stateDetector = "0"; // NOTHING
                   
   server.handleClient();
   MDNS.update();
+
+  // ===================================== TURN LIGHT INDICATION
+  if (delaycount == 10) delaycount = 0;
+  if (delaycount == 0)
+  { 
+    if (blink == true)
+    { 
+      Serial.print("BLINKING. action=");
+      Serial.println(action);
+      if ( action == 1 ) turnLeft();
+      if ( action == 2 ) turnRight();
+      if ( action == 3 ) warnings();
+      if ( stateDetector == "1" ) Break();
+      blink = false;
+    }
+    else
+    {
+      turnOff();
+      /*if ( distance_cm >= 120 ) {
+        turnOff();
+      }*/
+      blink = true;
+    }
+  }
+
+  // ===================================== COUNTERS
+  delaycount++;
+  delaylight++;
+
+  delay(40);
 }

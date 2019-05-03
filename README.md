@@ -18,7 +18,19 @@ Turn signal and blind spot detection for Xiaomi M365
 <p align="center">
   <img src="ressources/sonar.jpg?raw=true" style="max-width:50%;">
 </p>
-  
+
+- The  Android application, used to control remotly the electric scooter
+<p align="center">
+  <img src="ressources/appli icone.png?raw=true" style="max-width:50%;">
+</p>
+The application connect to the Xiaomi M365 with the bluetooth protocol.<br>
+This allow the Weemos (the web server) to retreive the speed of the electric scooter.<br>
+Here is a screenshot with the interface with the blinking controls, the electric scooter battery and the speed in real time :<br>
+<br>
+<p align="center">
+  <img src="ressources/Screenshot_20190503-045751.jpg?raw=true" style="max-width:50%;">
+</p>
+
 ## Software requirements
 
 [Arduino IDE with ESP8266 platform installed](https://www.arduino.cc/en/main/software)
@@ -34,6 +46,16 @@ If you use windows / OSx you will probably need drivers: [Wemos Driver](https://
 - ESP8266FS (SPIFFS, see: [Using ESP8266 SPIFFS tutorial](https://www.instructables.com/id/Using-ESP8266-SPIFFS/) )
 
 ## How does it work ?
+<p align="center">
+  <img src="ressources/schema1.jpg?raw=true" style="max-width:50%;">
+</p>
+The electric scooter Xiaomi M365 have a bluetooth connection that can be used to get some informations like the actual speed, the battery. This is sent to the android application.<br>
+The Weemos is connected to the phone wifi hotspot, and so the can connect it via the android application from a webview. The android application is a bridge from the bluetooth to the web interface.
+<br>
+<p align="center">
+  <img src="ressources/schema2.jpg?raw=true" style="max-width:50%;">
+</p>
+
 ### Wiring
 Firstly, the Arduino card connect on a WiFi network. Modify the SSID and Password at the top of the code.<br>
 Secondly, use the diagram bellow the connect the sonar (enabling blind spot detection) and the led strip (enabling turn signal and warning signal) <br>
