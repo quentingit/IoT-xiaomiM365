@@ -92,3 +92,12 @@ We have been searching the perfect value and we have found that 20 is a good val
 <br>
 Both the moving average and the median are removing most of the peaks that we do not want here. As the median is more "flat", we used this signal to solve the problem.<br>
 
+# Building the SecureBox
+
+<p align="center">
+  <img src="ressources/schema-construction.jpg?raw=true" style="max-width:50%;">
+</p>
+
+## Video of the prototype
+
+[Click here to see the video](https://drive.google.com/file/d/1nNjBMYanGiluA92XC430YwJ56WK5rWbO/view?usp=sharing)
