@@ -1,7 +1,7 @@
 # Xiaomi M365 SecureBOX
-<center>
-![Xiaomi M365 SecureBOX](ressources/m365box-gif-md.gif?raw=true)
-</center>
+<p align="center">
+  <img src="ressources/m365box-gif-md.gif?raw=true">
+</p>
 
 ## Introduction
 Turn signal and blind spot detection for Xiaomi M365
@@ -28,9 +28,8 @@ If you use windows / OSx you will probably need drivers: [Wemos Driver](https://
 
 Firstly, the Arduino card connect on a WiFi network. Modify the SSID and Password at the top of the code.<br>
 Secondly, use the diagram bellow the connect the sonar (enabling blind spot detection) and the led strip (enabling turn signal and warning signal) <br>
-<center>
+
 ![Conneciton schema](ressources/ConnectionSchema.png?raw=true)
-</center>
 
 ## Issues
 
@@ -41,22 +40,22 @@ To solve this problem, we put 2 additionnal signals :<br>
 -The median of the 15 last values of the original signal (blue)<br>
 -The moving average of the 15 last values of the original signal (red)<br>
 <br>
-<center>
+
 ![Problem sonar](ressources/problem.jpg?raw=true)
-</center>
+
 <br>
 As we can see on the picture above, an array of 15 values is not enought for making the signal flat and removing the noise we do not want. Let's try with 30 values :<br>
 <br>
-<center>
+
 ![Problem sonar 2](ressources/problem2.jpg?raw=true)
-</center>
+
 <br>
 While trying to simulate an obstacle, we saw that it was slow to detect the signal, almost 2/3 of the real signal (green) is lost because of the median filter if we use it.<br>
 We have been searching the perfect value and we have found that 20 is a good value :<br>
 <br>
-<center>
+
 ![Problem sonar 3](ressources/problem3.jpg?raw=true)
-</center>
+
 <br>
 Both the moving average and the median are removing most of the peaks that we do not want here. As the median is more "flat", we used this signal to solve the problem.<br>
 
