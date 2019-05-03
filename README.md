@@ -45,6 +45,11 @@ If you use windows / OSx you will probably need drivers: [Wemos Driver](https://
 ### External library
 - ESP8266FS (SPIFFS, see: [Using ESP8266 SPIFFS tutorial](https://www.instructables.com/id/Using-ESP8266-SPIFFS/) )
 
+### Android app library
+Links usefuls for the androidapp:<br>
+- Communicate with xiaomi for get parameters  : https://github.com/maisi/M365-Power
+- webview bridge library to communicate between android (java) and webview (js): https://github.com/lzyzsd/JsBridge
+
 ## How does it work ?
 <p align="center">
   <img src="ressources/schema1.jpg?raw=true" style="max-width:50%;">
