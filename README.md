@@ -101,3 +101,5 @@ Both the moving average and the median are removing most of the peaks that we do
 ## Video of the prototype
 
 [Click here to see the video](https://drive.google.com/file/d/1nNjBMYanGiluA92XC430YwJ56WK5rWbO/view?usp=sharing)
+
+<a href="https://drive.google.com/file/d/1nNjBMYanGiluA92XC430YwJ56WK5rWbO/view?usp=sharing"><img src="ressources/play.jpg"></a>
