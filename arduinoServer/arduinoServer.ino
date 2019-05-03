@@ -2,8 +2,9 @@
 #include <Adafruit_NeoPixel.h>
 // ===================================== BLIND SPOT SENSOR
 #include "QuickMedianLib.h"
-float valuesHistory[15];
-float valuesHistoryLen = sizeof(valuesHistory) / sizeof(float);
+float valuesHistory[20];
+float valuesHistoryLen = sizeof(valuesHistory) / sizeof(float); // see doc for QuickMedianLib
+int HistorySize = 20;
 // ===================================== WIFI
 #include <ESP8266WiFi.h>
 // ===================================== LEDS
@@ -44,10 +45,9 @@ const unsigned long MEASURE_TIMEOUT = 25000UL; // TIMEOUT : 12ms = ~4m (340m/s)
 const float SOUND_SPEED = 340.0 / 1000; // sound speed in the air in mm/µs
 int delaylight = 0;
 // ===================================== WIFI
-const char* ssid = "Freebox-03F8EF";//"CCCP";                     // your network SSID (name)
-//const char* password = "Reseau-GES";//"6c28995d5791";             // your network password
-//const char* ssid = "ESGI";
-const char* password = "emptor!#-cogitemus*-cellia97-timebunt*";
+const char* ssid = "ESGI"; // your network name (SSID)
+const char* password = "Reseau-GES"; // your network password
+
 WiFiServer server(80);
 // Variable to store the HTTP request
 String header;
@@ -240,19 +240,19 @@ void loop() {
   Serial.println();
   if (distance_cm)
   {
-    // serial print median + average
-    for(int i = 0;i<15;i++)
+    // shifting history of CM values
+    for(int i = 0;i<HistorySize;i++)
     {
-      if(!valuesHistory[13-i]) valuesHistory[14-i] = distance_cm;
-      valuesHistory[14-i] = valuesHistory[14-i-1];
+      if(!valuesHistory[(HistorySize-2)-i]) valuesHistory[(HistorySize-1)-i] = distance_cm;
+      valuesHistory[(HistorySize-1)-i] = valuesHistory[(HistorySize-2)-i];
     }
     valuesHistory[0] = distance_cm;
     float med = QuickMedian<float>::GetMedian(valuesHistory, valuesHistoryLen);
     Serial.print(med); // CM DISTANCE MEDIAN
     Serial.print(" ");
     float moy = 0;
-    for(int i=0;i<15;i++){ moy += valuesHistory[i]; }
-    moy = moy / 15;
+    for(int i=0;i<HistorySize;i++){ moy += valuesHistory[i]; }
+    moy = moy / HistorySize;
     Serial.print(moy); // CM DISTANCE AVERAGE
     Serial.print(" ");
     Serial.println(distance_cm, 2); // CM DISTANCE
