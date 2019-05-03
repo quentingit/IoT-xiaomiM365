@@ -1,0 +1,21 @@
+<resources>
+
+    <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
+        <!-- API 14 theme customizations can go here. -->
+    </style>
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme"/>
+    <style name="MyAppTheme" parent="Theme.AppCompat.Light">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+
+    <style name="Mytheme" parent="Theme.AppCompat.NoActionBar" >
+        <item name="colorAccent">#fff</item>
+        <item name="android:itemBackground">#000</item>
+        <item name="android:textColor">#fff</item>
+
+    </style>
+
+
+</resources>

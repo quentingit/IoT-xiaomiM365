@@ -1,0 +1,185 @@
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <title>
+        SecureBox M365
+    </title>
+    <style type='text/css'>
+            body{margin:auto auto;text-align:center;}
+            img{width:100%25;}
+
+            @font-face {
+              font-family: number;
+              src: url(number.TTF);
+            }
+            .blink_me {
+              animation: blinker 1s linear infinite;
+            }
+            @keyframes blinker {
+              50% {
+                opacity: 0;
+              }
+            }
+        </style>
+</head>
+
+<body bgcolor="black">
+<div >
+    <!-- GENERAL BACKGROUND -->
+    <div id="bg"><img style="position:absolute;z-index:0;max-width:100%;max-height:100%;height: auto;width:auto;position: absolute;top: 50%;left: 50%; -moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%);transform: translateX(-50%) translateY(-50%);"  src="./bg2.png" /></div>
+    <!-- theWARNING -->
+    <div id="warning"><a  onclick="warning(0)" style="padding:20px 60px; border-radius:20px; border:2px solid #60d3e1;color:#60d3e1; font-size:15px; position: absolute;top: 80%;left: 50%;-moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); transform: translateX(-50%) translateY(-50%);%);">WARNING</a></div>
+
+    <!-- LEFT AND RIGHT BLINKING -->
+    <div id="right" ><a onclick="rightBlinking(0)">  <img  src="./clignotant.png" style="position: absolute; width:150px; height:150px;top: 50%;left: 85%;-moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); transform: translateX(-50%) translateY(-50%);%)" /></a></div>
+    <div id="left"> <a onclick="leftBlinking(0)" > <img  src="./clignotant.png" style="position: absolute; width:150px; height:150px;top: 50%;left: 15%;-moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); transform: translateX(-50%) translateY(-50%);%);" /> </a></div>
+
+
+    <!--WHILE THE LOAD -->
+    <div id="load">
+        <div style="position:absolute;background-color:black;height: 100%;width:100%;"></div>
+        <img style='z-index:999;position:absolute;z-index:0;max-width:100%;max-height:100%;height: auto;width:auto; position: absolute;top: 50%;left: 50%;-moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); transform: translateX(-50%) translateY(-50%);%);'  src='./loader.gif' />
+        <a style="color:#60d3e1; font-size:15px; position: absolute;top: 85%;left: 50%;-moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); transform: translateX(-50%) translateY(-50%);%);">welcome to the future...</a>
+    </div>
+
+    <!-- SHOW SPEED AND BATTERY FROM JAVA -->
+    <div id="showBattery" ></div>
+    <div id="showSpeed" ></div>
+
+    <p><xmp id="init"></xmp></p>
+</div>
+</body>
+<script>
+
+
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      ////////////////////////////////// PROGRAM FUNCTIONS --  PROGRAM FUNCTIONS --  PROGRAM FUNCTIONS --  PROGRAM FUNCTIONS -- ///////
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        function rightBlinking(x) {
+             if(x==0){
+                document.getElementById("right").innerHTML="<a onclick='rightBlinking(1)'>  <img class='blink_me' src='./clignotant.png' style='position: absolute; width:150px; height:150px;top: 50%;left: 85%;-moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); transform: translateX(-50%) translateY(-50%);%)' /></a>";
+                //SEND XMLHttpRequest
+                 var request = new XMLHttpRequest();
+                 var uniqueURL = "http://192.168.43.109:80/rightblinking?rightblinking=0";
+                 request.open("GET", uniqueURL , true); // ici on envoie la requête GET sur l'URL
+                 request.send(null);
+             }else{
+                    document.getElementById("right").innerHTML="<a onclick='rightBlinking(0)'>  <img  src='./clignotant.png' style='position: absolute; width:150px; height:150px;top: 50%;left: 85%;-moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); transform: translateX(-50%) translateY(-50%);%)' /></a>";
+                    //SEND XMLHttpRequest
+                    var request = new XMLHttpRequest();
+                    var uniqueURL = "http://192.168.43.109:80/rightblinking?rightblinking=1";
+                    request.open("GET", uniqueURL , true); // ici on envoie la requête GET sur l'URL
+                    request.send(null);
+             }
+        }
+
+          function leftBlinking(x) {
+                 if(x==0){
+                     document.getElementById("left").innerHTML="<a onclick='leftBlinking(1)'>  <img class='blink_me' src='./clignotant.png' style='position: absolute; width:150px; height:150px;top: 50%;left: 15%;-moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); transform: translateX(-50%) translateY(-50%);%)' /></a>";
+                    //SEND XMLHttpRequest
+                    var request = new XMLHttpRequest();
+                    var uniqueURL = "http://192.168.43.109:80/leftblinking?leftblinking=0";
+                    request.open("GET", uniqueURL , true); // ici on envoie la requête GET sur l'URL
+                    request.send(null);
+                 }else{
+                     document.getElementById("left").innerHTML="<a onclick='leftBlinking(0)'>  <img  src='./clignotant.png' style='position: absolute; width:150px; height:150px;top: 50%;left: 15%;-moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); transform: translateX(-50%) translateY(-50%);%)' /></a>";
+                      //SEND XMLHttpRequest
+                       var request = new XMLHttpRequest();
+                       var uniqueURL = "http://192.168.43.109:80/leftblinking?leftblinking=1";
+                       request.open("GET", uniqueURL , true); // ici on envoie la requête GET sur l'URL
+                       request.send(null);
+                 }
+            }
+
+
+        function warning(x) {
+                  if(x==0){
+                       document.getElementById("warning").innerHTML="<a  onclick='warning(1)' style='padding:20px 60px; border-radius:20px; border:2px solid #ff0000;color:#ff0000; font-size:15px; position: absolute;top: 80%;left: 50%;-moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); transform: translateX(-50%) translateY(-50%);%);'>STOP</a>";
+                       document.getElementById("bg").innerHTML="<img style='position:absolute;z-index:0;max-width:100%;max-height:100%;height: auto;width:auto;position: absolute;top: 50%;left: 50%; -moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%);transform: translateX(-50%) translateY(-50%);'  src='./bg-danger.png' />";
+                       //SEND XMLHttpRequest
+                       var request = new XMLHttpRequest();
+                       var uniqueURL = "http://192.168.43.109:80/warning?warning=0";
+                       request.open("GET", uniqueURL , true); // ici on envoie la requête GET sur l'URL
+                       request.send(null);
+                       //xmlHttp.responseText;
+                  }else{
+                       document.getElementById("warning").innerHTML="<a  onclick='warning(0)' style='padding:20px 60px; border-radius:20px; border:2px solid #60d3e1;color:#60d3e1; font-size:15px; position: absolute;top: 80%;left: 50%;-moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); transform: translateX(-50%) translateY(-50%);%);'>WARNING</a>";
+                       document.getElementById("bg").innerHTML="<img style='position:absolute;z-index:0;max-width:100%;max-height:100%;height: auto;width:auto;position: absolute;top: 50%;left: 50%; -moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%);transform: translateX(-50%) translateY(-50%);'  src='./bg2.png' />";
+                       var request = new XMLHttpRequest();
+                       var uniqueURL = "http://192.168.43.109:80/warning?warning=1";
+                       request.open("GET", uniqueURL , true); // ici on envoie la requête GET sur l'URL
+                       request.send(null);
+                      //request.send(null);
+
+
+                  }
+        }
+
+
+        //LOOP ALL 1 SECOND TO SEND SPEED AND RECEIVE STATE DETECTOR CAR
+
+
+
+
+
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////// BRIDGE FUNCTIONS --  BRIDGE FUNCTIONS --BRIDGE FUNCTIONS --BRIDGE FUNCTIONS --BRIDGE FUNCTIONS ////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        function bridgeLog(logContent) {
+            document.getElementById("show").innerHTML = logContent;
+        }
+
+        function connectWebViewJavascriptBridge(callback) {
+            if (window.WebViewJavascriptBridge) {
+                callback(WebViewJavascriptBridge)
+            } else {
+                document.addEventListener(
+                    'WebViewJavascriptBridgeReady'
+                    , function() {
+                        callback(WebViewJavascriptBridge)
+                    },
+                    false
+                );
+            }
+        }
+
+        connectWebViewJavascriptBridge(function(bridge) {
+            bridge.init(function(message, responseCallback) {
+                console.log('JS got a message', message);
+                var data = {
+                    'Javascript Responds': '测试中文!'
+                };
+
+                if (responseCallback) {
+                    console.log('JS responding with', data);
+                    responseCallback(data);
+                }
+            });
+
+
+            bridge.registerHandler("functionInJs", function(data, responseCallback) {
+
+                //DATA PARSE
+                var obj = JSON.parse(data);
+
+                if(obj.speed==="0" && obj.battery==="0"){
+                }else{
+                    // UPDATE SPPED / BATTERY , AND CLEAN EMPTY LOAD DIV
+                    document.getElementById("load").innerHTML =
+                    document.getElementById("showSpeed").innerHTML = "<div style='font-family:number;z-index:100;color:#60d3e1;position:absolute;top: 46%;left: 50%; -moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%);transform: translateX(-50%) translateY(-50%)>'> <a style='font-size:70px;'>" + obj.speed + "</a> <br/><a style='margin-top:5px;font-size:18px;'>Km/h </a></div>";
+                    document.getElementById("showBattery").innerHTML = "<div style='z-index:100;color:#60d3e1;font-family:number;z-index:100;color:#60d3e1;position:absolute;top: 18%;left: 50%; -moz-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%);transform: translateX(-50%) translateY(-50%)>'> <a style='font-size:30px;'><img src='./battery.png' height='16px;' /><br/>" + obj.battery  + "% </div>";
+                }
+
+                if (responseCallback) {
+                    var responseData = "Javascript Says Right back aka!";
+                    responseCallback(responseData);
+                }
+            });
+        })
+    </script>
+
+</html>

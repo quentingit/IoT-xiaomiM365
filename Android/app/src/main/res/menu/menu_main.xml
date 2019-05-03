@@ -1,0 +1,67 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    >
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="105"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/resetStat"
+        android:orderInCategory="110"
+        android:title="Reset Stats"
+        app:showAsAction="never" />
+
+
+
+    <item
+        android:id="@+id/start_handler_button2"
+        android:orderInCategory="100"
+        android:title="start handler"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/time2"
+        android:orderInCategory="100"
+        android:title="(disconnected)"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/connect"
+        android:orderInCategory="100"
+        android:title="Re/Connect"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/lock"
+        android:orderInCategory="100"
+        android:title="Locked"
+        android:checkable="true"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/cruise"
+        android:orderInCategory="100"
+        android:title="Cruise Mode"
+        android:checkable="true"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/light"
+        android:orderInCategory="100"
+        android:title="Rear Light"
+        android:checkable="true"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/recovery"
+        android:orderInCategory="100"
+        android:title="Recovery Mode"
+        app:showAsAction="never">
+        <menu>
+        <group android:checkableBehavior="single">
+        <item android:id="@+id/weak"
+            android:title="weak" />
+        <item android:id="@+id/medium"
+            android:title="medium" />
+        <item android:id="@+id/strong"
+             android:title="strong" />
+        </group>
+        </menu>
+    </item>
+</menu>
