@@ -11,8 +11,13 @@ Turn signal and blind spot detection for Xiaomi M365
 <p align="center">
   <img src="ressources/wemos.jpg?raw=true">
 </p>
-- Led strip composed of 14 leds
-- Sonar HC-SR04 or DYP-ME007V1
+
+- Led strip composed of 14 leds (5V)
+
+- Sonar HC-SR04 or DYP-ME007V1 (5V)
+<p align="center">
+  <img src="ressources/sonar.jpg?raw=true">
+</p>
   
 ## Software requirements
 
